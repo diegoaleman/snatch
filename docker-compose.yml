@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+  app:
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    # container_name: pe-app
+    volumes:
+      - .:/app
+      - bundle:/bundle
+    stdin_open: true
+    tty: true
+    env_file:
+      - .env
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    # container_name: pe-db
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: "db"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+
+volumes:
+  bundle:
